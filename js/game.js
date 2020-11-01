@@ -45,12 +45,13 @@ const game = {
         this.canvasTag = document.getElementById(id)
         this.ctx = this.canvasTag.getContext('2d')
         this.setDimensions()
-        this.reset()
+        this.start()
+        //hasta aqui el init
         this.drawBricks()
         this.drawBar()
         this.drawBall()
         this.drawBackground()
-        this.drawAll()
+        //2. this.drawAll()
         this.setEventListeners()
         
          
@@ -63,34 +64,59 @@ const game = {
         this.canvasTag.setAttribute('height', this.canvasSize.h)
     },
 
+    start() {
+        this.reset()
+        this.interval = setInterval(() => {
+        this.clearScreen() 
+        this.drawAll()    
+        this.createDoubleSize()
+        this.moveDoubleSize()
+        this.createExtraBalls()
+        this.moveExtraBalls()
+        //clear arrays    
+        this.clearOutOfScreen()
+        //end game
+        this.balls.length == 0 ? this.gameOver() : null 
+        this.bricks.length == 0 ? this.youWin() : null
+            
+        },(1000 / this.fps))
+
+
+    
+    },
+
     reset() {
         
 
     },
 
     drawAll() {
-        setInterval(() => {
-            this.frames++
-            this.clearScreen() 
+        
+            //framesreset
+            this.frames > 2000 ? this.frames = 0 : this.frames++
+            ////game elements
+            //1.this.clearScreen() 
             this.background.draw()
             this.bar.draw()
             this.bricks.forEach(elm=> elm.draw())
             this.balls.forEach(elm => elm.draw())
             //power-ups
-            this.createDoubleSize()
-            this.clearOutOfScreen()
-            this.moveDoubleSize()
+            //3.this.createDoubleSize()
+            //9.this.clearOutOfScreen()
+            //4.this.moveDoubleSize()
             this.doubleSize.forEach(e => e.draw())
-            this.createExtraBalls()
-            this.moveExtraBalls()
+            //5.this.createExtraBalls()
+            //6.this.moveExtraBalls()
             this.extraBalls.forEach(e => e.draw())
             //colisiones
             this.bricksColision()
             this.barColision()
             this.DSColision()
             this.EBColision()
+            //7.this.balls.length == 0 ? this.gameOver() : null
+            //8.this.bricks.length == 0 ? this.youWin() : null
             
-        },(1000 / this.fps))
+
     },
 
     drawBar() {
@@ -119,7 +145,6 @@ const game = {
                     eachball.ballPos.bally <= eachBrick.brickPos.bricky + eachBrick.brickSize.brickH + 10)
                 {
                     eachball.ballVel.y *= -1
-                    //console.log (eachBrick)
                     eachBrick.brickStatus = 0
                     this.bricks = this.bricks.filter (eachBrick => eachBrick.brickStatus !== 0)// no elimina nada
                 }
@@ -225,13 +250,34 @@ const game = {
         this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
     },
 
-
     barColision() {
         this.balls.forEach(elm => {
             if (elm.ballPos.ballx >= this.bar.barPos.x &&
-                elm.ballPos.ballx <= this.bar.barPos.x + this.bar.barSize.w &&
-                elm.ballPos.bally + 10 >= this.bar.barPos.y) {
-                elm.ballVel.y *= -1
+                elm.ballPos.ballx <= this.bar.barPos.x + this.bar.barSize.w / 2 &&
+                elm.ballPos.bally + 10 >= this.bar.barPos.y)
+            {
+                if (elm.ballVel.x < 0) {
+                    elm.ballVel.y *= -1
+                    elm.ballVel.x *= 1
+                }
+                else {
+                    elm.ballVel.y *= - 1
+                    elm.ballVel.x *= - 1
+                }
+                
+            }
+            if (elm.ballPos.ballx >= this.bar.barPos.x + this.bar.barSize.w / 2 &&
+                elm.ballPos.ballx <= this.bar.barPos.x + this.bar.barSize.w  &&
+                elm.ballPos.bally + 10 >= this.bar.barPos.y)
+            {
+                if (elm.ballVel.x > 0) {
+                    elm.ballVel.y *= -1
+                    elm.ballVel.x *= 1
+                }
+                else {
+                    elm.ballVel.y *= - 1
+                    elm.ballVel.x *= - 1
+                }
             }
         })
     },
@@ -250,5 +296,15 @@ const game = {
         //console.log(this.extraBalls)
         this.balls = this.balls.filter(e => e.ballPos.bally <= this.canvasSize.h)
         //console.log(this.balls)
-    }
+    },
+
+    youWin() {
+        clearInterval(this.interval)
+        alert("You Win. You are a master!!!!")
+    },
+
+    gameOver() {
+        clearInterval(this.interval)
+        alert ("¡¡GAME OVER!! ¡¡TRY AGAIN!!")
+  }
 }
