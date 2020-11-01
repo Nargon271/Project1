@@ -4,18 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arkanoid</title>
+    <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
      <!--Style Reset-->
-     <style>
+  <style>
     body {
       margin: 0;
       padding: 0;
     }
   </style>
+  <div class="start-game" id="gameStart">
+    <img src="images/arkanoid-logo.png" alt="arkanoid-logo">
+    <h1>¡¡Welcome to the best Arkanoid game ever!!</h1>
+    <p>Developed by: Gonzalo Argüelles and Carlos Martin-Salas</p>
+    <p>Use the "left" and "right" keys on your keyboard to move around the screen</p>
+    <button id="start-button">Start Game</button>
+  </div>
     
     <!-- Canvas -->
     <canvas id="canvas"></canvas>
+    
+    
+    
     <!--Game-Audio encontrar una mejor forma para que se reproduzca automaticamente-->
     <!--<audio src="sounds/06_-_Arkanoid_-_ARC_-_Name_Entry.ogg" controls autoplay loop></audio>-->
 
