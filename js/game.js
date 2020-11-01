@@ -15,11 +15,24 @@ const game = {
     //juego
     fps: 60,
     frames: 0,
+    // barra
     bar: undefined,
-     keys: {
+    barWidth: 200,
+    keys: {
         left: 37,
         right: 39
-    },
+    }, 
+    //bricks
+    bricks: [],
+    brickHeight: 40,
+    brickWidth: 100,
+    brickStatus: 1,
+    brickColor: 'blue',
+    brickIniPosX: 10,// cambiar esto para colocarlo siempre en el centro del canvas
+    brickIniPosY: 10,
+    brickRow: 5,
+    brickCol: 13,
+
     //balls
     balls: [],
     
@@ -33,6 +46,7 @@ const game = {
         this.ctx = this.canvasTag.getContext('2d')
         this.setDimensions()
         this.reset()
+        this.drawBricks()
         this.drawBar()
         this.drawBall()
         this.drawBackground()
@@ -60,7 +74,9 @@ const game = {
             this.clearScreen() 
             this.background.draw()
             this.bar.draw()
+            this.bricks.forEach(elm=> elm.draw())
             this.balls.forEach(elm => elm.draw())
+            //power-ups
             this.createDoubleSize()
             this.clearOutOfScreen()
             this.moveDoubleSize()
@@ -68,7 +84,8 @@ const game = {
             this.createExtraBalls()
             this.moveExtraBalls()
             this.extraBalls.forEach(e => e.draw())
-            
+            //colisiones
+            this.bricksColision()
             this.barColision()
             this.DSColision()
             this.EBColision()
@@ -78,8 +95,48 @@ const game = {
 
     drawBar() {
         //this.bar = new PlayerBar(this.ctx, this.canvasSize.w - 290, this.canvasSize.h - 200, 100, 200, '../images/background1.png')
-        this.bar = new PlayerBar(this.ctx, this.canvasSize.w/2 - 100, this.canvasSize.h - 50, 200, 25, '../images/player-bar.png')
+        this.bar = new PlayerBar(this.ctx, this.canvasSize.w/2 - 100, this.canvasSize.h - 50, this.barWidth, 25, '../images/player-bar.png')
         
+    },
+
+    drawBricks() {
+        //(ctx, brickPosX, brickPosY, brickHeight, brickWidth,brickStatus, canvasSize)
+        // this.bricks.push(new Brick(this.ctx, 100, 100, this.brickHeight, this.brickWidth,this.brickStatus, this.canvasSize))
+        for (let i = 0; i < this.brickRow; i++){
+            for (let j = 0; j < this.brickCol; j++){
+                this.bricks.push(new Brick (this.ctx,this.brickIniPosX + this.brickWidth * j,this.brickIniPosY + this.brickHeight * i, this.brickHeight, this.brickWidth, this.brickStatus, this.canvasSize))
+            }
+        }
+        console.log(this.bricks)
+    },
+
+    bricksColision() {
+        this.balls.forEach(eachball => {
+            this.bricks.forEach(eachBrick => {
+                if (eachball.ballPos.ballx >= eachBrick.brickPos.brickx &&
+                    eachball.ballPos.ballx <= eachBrick.brickPos.brickx + eachBrick.brickSize.brickW &&
+                    eachball.ballPos.bally + 10 >= eachBrick.brickPos.bricky &&
+                    eachball.ballPos.bally <= eachBrick.brickPos.bricky + eachBrick.brickSize.brickH + 10)
+                {
+                    eachball.ballVel.y *= -1
+                    //console.log (eachBrick)
+                    eachBrick.brickStatus = 0
+                    this.bricks = this.bricks.filter (eachBrick => eachBrick.brickStatus !== 0)// no elimina nada
+                }
+
+
+                if (eachball.ballPos.bally >= eachBrick.brickPos.bricky &&
+                    eachball.ballPos.bally <= eachBrick.brickPos.bricky + eachBrick.brickSize.brickH && 
+                    eachball.ballPos.ballx + 10 >= eachBrick.brickPos.brickx &&
+                    eachball.ballPos.ballx <= eachBrick.brickPos.brickx + eachBrick.brickSize.brickW + 10
+                    ) {
+                    eachball.ballVel.x *= -1
+                    eachBrick.brickStatus = 0
+                    this.bricks = this.bricks.filter (eachBrick => eachBrick.brickStatus !== 0)
+                }
+
+            })
+        } )
     },
 
     drawBall() {
@@ -112,12 +169,12 @@ const game = {
                 e.EBSize.h + e.EBPos.y > this.bar.barPos.y)
             {
             // se añaden dos bolas mas al juego
-                console.log("nuevas bolas")
+                //console.log("nuevas bolas")
                 this.balls.push(new Ball (this.ctx, this.bar.barPos.x + this.bar.barSize.w / 2, this.canvasSize.h - 60, 10, 20, 2, 4, this.canvasSize))
                 this.balls.push(new Ball (this.ctx, this.bar.barPos.x + this.bar.barSize.w / 2, this.canvasSize.h - 60, 10, 20, -2, 4, this.canvasSize))
-            // Desparace el powerup al tocar la barra
-            this.extraBalls = this.extraBalls.filter(e => e.EBPos.y >= this.bar.barPos.y)
-            console.log(this.extraBalls)    
+                // Desparace el powerup al tocar la barra
+                this.extraBalls = this.extraBalls.filter(e => e.EBPos.y >= this.bar.barPos.y)
+                //console.log(this.extraBalls)    
             }
         })
     },
@@ -155,7 +212,7 @@ const game = {
     },
 
     growSize() {
-        this.bar.barSize.w = 400
+        this.bar.barSize.w = this.barWidth * 2
     },
 
     drawBackground(){
@@ -167,6 +224,7 @@ const game = {
         
         this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
     },
+
 
     barColision() {
         this.balls.forEach(elm => {

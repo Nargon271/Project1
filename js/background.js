@@ -5,8 +5,8 @@ class Background {
         //     w: bgWidth,
         //     h: bgHeight
         // },
-        this.bgWidth = innerWidth
-        this.bgHeight = innerWidth
+        this.bgWidth = bgWidth
+        this.bgHeight = bgHeight
         this.posX = 0;
         this.posY = 0;
 

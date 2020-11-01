@@ -29,7 +29,7 @@ class PlayerBar {
             this.barPos.x -=20
         } else null
        
-        if (dir === 'right' && this.barPos.x < window.innerWidth - 200) {
+        if (dir === 'right' && this.barPos.x < window.innerWidth - this.barSize.w) {
             this.barPos.x += 20
         } else null
     }
