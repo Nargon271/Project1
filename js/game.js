@@ -15,6 +15,9 @@ const game = {
     //juego
     fps: 60,
     frames: 0,
+    //SCORE
+    score: 0,
+    pointsprueba: undefined,
     // bar
     bar: undefined,
     barWidth: 200,
@@ -29,7 +32,7 @@ const game = {
     brickStatus: 1,
     brickColor: 'blue',
     brickIniPosX: 35,// cambiar esto para colocarlo siempre en el centro del canvas
-    brickIniPosY: 10,
+    brickIniPosY: 70,
     brickRow: 5,
     brickCol: 13,
 
@@ -89,9 +92,11 @@ const game = {
     reset() {
         this.drawBackground()
         this.drawBar()
+        this.score = 0
         this.doubleSize = []
         this.extraBalls = []
         this.bricks = []
+        this.points()
         this.drawBricks()
         this.drawBall()
         this.bricksColision()
@@ -191,6 +196,10 @@ const game = {
                 {
                     eachball.ballVel.y *= -1
                     eachBrick.brickStatus = 0
+                    this.score += 100
+                    this.points()
+
+                    console.log(this.score)
                     this.bricks = this.bricks.filter (eachBrick => eachBrick.brickStatus !== 0)// no elimina nada
                 }
 
@@ -202,6 +211,10 @@ const game = {
                     ) {
                     eachball.ballVel.x *= -1
                     eachBrick.brickStatus = 0
+                    this.score += 100
+                    this.points()
+
+                    console.log(this.score)
                     this.bricks = this.bricks.filter (eachBrick => eachBrick.brickStatus !== 0)
                 }
 
@@ -303,6 +316,17 @@ const game = {
         }
     },
     
+    //SCORE
+
+    points() {
+        this.pointsprueba = document.querySelector('#totalScore')
+        this.pointsnumber = this.pointsprueba.innerHTML
+        this.pointsnumber = this.score
+        //console.log(this.pointsnumber)
+        this.pointsprueba.innerHTML = this.pointsnumber
+        
+    },
+
     //Clear SCREEN and ARRAYS
 
     clearScreen() {

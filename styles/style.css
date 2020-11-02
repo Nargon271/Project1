@@ -20,6 +20,20 @@ p{
     font-size: 20px;
 }
 
+.score{
+   font-family: monospace;
+   position: absolute;
+   top: 0;
+   left: 100px;
+   bottom: 0;
+   right: 0;
+   display: none;
+}
+
+.score-game {
+    color:#c7f9cc;
+}
+
 button{
     font-size: 30px;
     font-family: monospace;

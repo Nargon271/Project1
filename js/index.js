@@ -8,6 +8,8 @@ window.onload = () => {
 function startGame() {
     const divDisplay = document.querySelector('#gameStart')
     divDisplay.style.display = 'none'
+    const scoreDisplay = document.querySelector('.score')
+    scoreDisplay.style.display = 'block'
     game.init('canvas')
 
 }
