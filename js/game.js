@@ -354,7 +354,9 @@ const game = {
         document.getElementById('sonidoFondo').pause()
         document.getElementById('gameoverSound').play()
         clearInterval(this.interval)
-        alert("¡¡GAME OVER!! ¡¡TRY AGAIN!!")
-        this.reset()
+        const GOdisplay = document.querySelector('#GOdiv')
+        GOdisplay.style.display = 'block'
+        //alert("¡¡GAME OVER!! ¡¡TRY AGAIN!!")
+        //this.reset()
     }
 }

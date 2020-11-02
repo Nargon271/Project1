@@ -45,3 +45,26 @@ button{
     border-radius: 5px;
     margin-bottom: 20px;
 }
+
+.GOlogo{
+    width:500px;
+    height:250px; 
+}
+
+.TAbutton{
+    background-color:#161a1d;
+}
+.game-over {
+    background-color:#e5383b;
+    font-family: monospace;
+    text-align: center;
+    color: #c7f9cc;
+    border-radius: 5px;
+    padding: 20px 40px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: none;
+}
