@@ -17,7 +17,9 @@ const game = {
     frames: 0,
     //SCORE
     score: 0,
-    pointsprueba: undefined,
+    pointsInGame: undefined,
+    pointsWin: undefined,
+    pointsGameOver: undefined,
     // bar
     bar: undefined,
     barWidth: 200,
@@ -31,10 +33,10 @@ const game = {
     brickWidth: 100,
     brickStatus: 1,
     brickColor: 'blue',
-    brickIniPosX: 35,// cambiar esto para colocarlo siempre en el centro del canvas
+    brickIniPosX: 35,
     brickIniPosY: 70,
-    brickRow: 5,
-    brickCol: 13,
+    brickRow: 5,//5
+    brickCol: 13,//13
 
     //balls
     balls: [],
@@ -93,6 +95,7 @@ const game = {
         this.drawBackground()
         this.drawBar()
         this.score = 0
+        this.balls = []
         this.doubleSize = []
         this.extraBalls = []
         this.bricks = []
@@ -319,11 +322,16 @@ const game = {
     //SCORE
 
     points() {
-        this.pointsprueba = document.querySelector('#totalScore')
-        this.pointsnumber = this.pointsprueba.innerHTML
-        this.pointsnumber = this.score
-        //console.log(this.pointsnumber)
-        this.pointsprueba.innerHTML = this.pointsnumber
+        this.pointsInGame = document.querySelector('.totalScore')
+        this.pointsInGame.innerHTML = this.score
+
+        this.pointsGameOver = document.querySelector('.totalScoreGO')
+        this.pointsGameOver.innerHTML = this.score
+
+        this.pointsWin = document.querySelector('.totalScoreW')
+        this.pointsWin.innerHTML = this.score
+
+
         
     },
 
@@ -347,7 +355,8 @@ const game = {
 
     youWin() {
         clearInterval(this.interval)
-        alert("You Win. You are a master!!!!")
+        const YWdivDisplay = document.querySelector('#windiv') 
+        YWdivDisplay.style.display = 'block'
     },
 
     gameOver() {
@@ -356,7 +365,5 @@ const game = {
         clearInterval(this.interval)
         const GOdisplay = document.querySelector('#GOdiv')
         GOdisplay.style.display = 'block'
-        //alert("¡¡GAME OVER!! ¡¡TRY AGAIN!!")
-        //this.reset()
     }
 }

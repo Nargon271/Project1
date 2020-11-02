@@ -25,16 +25,27 @@
 
   <!--DIV SCORE-->
   <div class="score" id="score-points">
-    <p class="score-game">SCORE:<span id="totalScore">0</span> </p>
+    <p class="score-game">SCORE:<span class="totalScore">0</span> </p>
   </div>
-
+  
+  <!--DIV GAME OVER-->
   <div class="game-over" id="GOdiv">
     <img  class="GOlogo" src="images/game_over.png" alt="game-over">
     <h1>Oooh!! You lost, better luck next time</h1>
+    <p class="score-game">SCORE:<span class="totalScoreGO">0</span> </p>
     <p>Developed by: Gonzalo Argüelles and Carlos Martin-Salas</p>
     <button  class="TAbutton" id="tryagain-button">Try Again</button>
   </div>
-    
+  
+  <!--DIV WIN-->
+  <div class="win" id="windiv">
+    <img  class="winimg" src="images/trophy.png" alt="win img">
+    <h1>You win!! you are a master!!</h1>
+    <p class="score-game">SCORE:<span class="totalScoreW">0</span> </p>
+    <p>Developed by: Gonzalo Argüelles and Carlos Martin-Salas</p>
+    <button  class="YWbutton" id="youWin-button">Try Again</button>
+  </div>
+
     <!-- Canvas -->
     <canvas id="canvas"></canvas>
     

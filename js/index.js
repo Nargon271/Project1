@@ -2,9 +2,11 @@ window.onload = () => {
     document.getElementById('start-button').onclick = () => {
         startGame();
     }
-    document.getElementById('GOdiv').onclick = () => {
+    document.getElementById('youWin-button').onclick = () => {
+        winAgain();
+    }
+    document.getElementById('tryagain-button').onclick = () => {
         tryAgain();
-    //document.getElementById('sonidoFondo').play()
     }
 }
 
@@ -20,6 +22,13 @@ function startGame () {
 function tryAgain () {
     const GOdivDisplay = document.querySelector('#GOdiv')
     GOdivDisplay.style.display = 'none'
+    console.log(this.bricks)
     game.reset('canvas')
-    
+}
+
+function winAgain() {
+    const YWdivDisplay = document.querySelector('#windiv')
+    YWdivDisplay.style.display = 'none'
+    console.log(this.bricks)
+    game.reset('canvas')
 }
