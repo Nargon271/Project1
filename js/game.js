@@ -289,6 +289,9 @@ const game = {
 
     growSize() {
         this.bar.barSize.w = this.barWidth * 2
+        setTimeout(() => {
+            this.bar.barSize.w = this.barWidth
+        }, 5000)
     },
 
     //KEYBOARD COMMANDS
