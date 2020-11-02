@@ -15,7 +15,7 @@ const game = {
     //juego
     fps: 60,
     frames: 0,
-    // barra
+    // bar
     bar: undefined,
     barWidth: 200,
     keys: {
@@ -28,7 +28,7 @@ const game = {
     brickWidth: 100,
     brickStatus: 1,
     brickColor: 'blue',
-    brickIniPosX: 10,// cambiar esto para colocarlo siempre en el centro del canvas
+    brickIniPosX: 35,// cambiar esto para colocarlo siempre en el centro del canvas
     brickIniPosY: 10,
     brickRow: 5,
     brickCol: 13,
@@ -40,6 +40,7 @@ const game = {
     doubleSize: [],
     extraBalls:[],
 
+    // GAME INITIALIZATION
 
     init(id) {
         this.canvasTag = document.getElementById(id)
@@ -65,7 +66,7 @@ const game = {
     },
 
     start() {
-        this.reset()
+        document.getElementById('sonidoFondo').play()
         this.interval = setInterval(() => {
         this.clearScreen() 
         this.drawAll()    
@@ -86,6 +87,15 @@ const game = {
     },
 
     reset() {
+        this.drawBackground()
+        this.drawBar()
+        this.doubleSize = []
+        this.extraBalls = []
+        this.bricks = []
+        this.drawBricks()
+        this.drawBall()
+        this.bricksColision()
+        this.start()
         
 
     },
@@ -94,30 +104,29 @@ const game = {
         
             //framesreset
             this.frames > 2000 ? this.frames = 0 : this.frames++
-            ////game elements
-            //1.this.clearScreen() 
+            ////game elements 
             this.background.draw()
             this.bar.draw()
             this.bricks.forEach(elm=> elm.draw())
             this.balls.forEach(elm => elm.draw())
             //power-ups
-            //3.this.createDoubleSize()
-            //9.this.clearOutOfScreen()
-            //4.this.moveDoubleSize()
             this.doubleSize.forEach(e => e.draw())
-            //5.this.createExtraBalls()
-            //6.this.moveExtraBalls()
             this.extraBalls.forEach(e => e.draw())
             //colisiones
             this.bricksColision()
             this.barColision()
             this.DSColision()
             this.EBColision()
-            //7.this.balls.length == 0 ? this.gameOver() : null
-            //8.this.bricks.length == 0 ? this.youWin() : null
-            
-
     },
+
+    //BACKGROUND
+
+    drawBackground(){
+        this.background = new Background(this.ctx, this.canvasSize.w, this.canvasSize.h, 'images/background1.png');
+        
+    },
+
+    //Bar Elements
 
     drawBar() {
         //this.bar = new PlayerBar(this.ctx, this.canvasSize.w - 290, this.canvasSize.h - 200, 100, 200, '../images/background1.png')
@@ -125,10 +134,46 @@ const game = {
         
     },
 
+    barColision() {
+        this.balls.forEach(elm => {
+            if (elm.ballPos.ballx >= this.bar.barPos.x &&
+                elm.ballPos.ballx <= (this.bar.barPos.x + this.bar.barSize.w / 2) -1 &&
+                elm.ballPos.bally + 10 >= this.bar.barPos.y)
+            {
+                console.log("izquierda",  elm.ballPos.ballx)
+                if (elm.ballVel.x < 0) {
+                    elm.ballVel.y *= -1
+                    elm.ballVel.x *= 1
+                }
+                else {
+                    elm.ballVel.y *= - 1
+                    elm.ballVel.x *= - 1
+                }
+                
+            }
+            if (elm.ballPos.ballx >= this.bar.barPos.x + this.bar.barSize.w / 2 &&
+                elm.ballPos.ballx <= this.bar.barPos.x + this.bar.barSize.w  &&
+                elm.ballPos.bally + 10 >= this.bar.barPos.y)
+            {
+                console.log("derecha",  elm.ballPos.ballx)
+                if (elm.ballVel.x > 0) {
+                    elm.ballVel.y *= -1
+                    elm.ballVel.x *= 1
+                }
+                else {
+                    elm.ballVel.y *= - 1
+                    elm.ballVel.x *= - 1
+                }
+            }
+        })
+    },
+
+    //Brick Elements
+
     drawBricks() {
         //(ctx, brickPosX, brickPosY, brickHeight, brickWidth,brickStatus, canvasSize)
         // this.bricks.push(new Brick(this.ctx, 100, 100, this.brickHeight, this.brickWidth,this.brickStatus, this.canvasSize))
-        for (let i = 0; i < this.brickRow; i++){
+         for (let i = 0; i < this.brickRow; i++){
             for (let j = 0; j < this.brickCol; j++){
                 this.bricks.push(new Brick (this.ctx,this.brickIniPosX + this.brickWidth * j,this.brickIniPosY + this.brickHeight * i, this.brickHeight, this.brickWidth, this.brickStatus, this.canvasSize))
             }
@@ -164,11 +209,15 @@ const game = {
         } )
     },
 
+    //Ball Elements
+
     drawBall() {
         //(ctx, ballPosX, ballPosY, ballRadius, ballDiameter, ballVelX, ballVely,canvasSize)
         this.balls.push(new Ball (this.ctx, this.canvasSize.w/2, this.canvasSize.h - 60, 10, 20, 4, 4, this.canvasSize))
     },
     
+    //EXTRA BALLS power up
+
     createExtraBalls() {
         if (this.frames % 200 === 0) {
           // constructor (ctx, DSPosX, DSPosY, DSWidth, DSHeight, DSImage)
@@ -203,6 +252,8 @@ const game = {
             }
         })
     },
+    
+    //DOUBLE SIZE power up
 
     createDoubleSize() {
         if (this.frames % 500 === 0) {
@@ -240,47 +291,7 @@ const game = {
         this.bar.barSize.w = this.barWidth * 2
     },
 
-    drawBackground(){
-        this.background = new Background(this.ctx, this.canvasSize.w, this.canvasSize.h, 'images/background1.png');
-        
-    },
-
-    clearScreen() {
-        
-        this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
-    },
-
-    barColision() {
-        this.balls.forEach(elm => {
-            if (elm.ballPos.ballx >= this.bar.barPos.x &&
-                elm.ballPos.ballx <= this.bar.barPos.x + this.bar.barSize.w / 2 &&
-                elm.ballPos.bally + 10 >= this.bar.barPos.y)
-            {
-                if (elm.ballVel.x < 0) {
-                    elm.ballVel.y *= -1
-                    elm.ballVel.x *= 1
-                }
-                else {
-                    elm.ballVel.y *= - 1
-                    elm.ballVel.x *= - 1
-                }
-                
-            }
-            if (elm.ballPos.ballx >= this.bar.barPos.x + this.bar.barSize.w / 2 &&
-                elm.ballPos.ballx <= this.bar.barPos.x + this.bar.barSize.w  &&
-                elm.ballPos.bally + 10 >= this.bar.barPos.y)
-            {
-                if (elm.ballVel.x > 0) {
-                    elm.ballVel.y *= -1
-                    elm.ballVel.x *= 1
-                }
-                else {
-                    elm.ballVel.y *= - 1
-                    elm.ballVel.x *= - 1
-                }
-            }
-        })
-    },
+    //KEYBOARD COMMANDS
 
     setEventListeners() {
         document.onkeydown = e => {
@@ -289,6 +300,13 @@ const game = {
         }
     },
     
+    //Clear SCREEN and ARRAYS
+
+    clearScreen() {
+        
+        this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
+    },
+
     clearOutOfScreen() {
         this.doubleSize = this.doubleSize.filter(e => e.DSPos.y <= this.canvasSize.h)
         //console.log(this.doubleSize)
@@ -297,6 +315,8 @@ const game = {
         this.balls = this.balls.filter(e => e.ballPos.bally <= this.canvasSize.h)
         //console.log(this.balls)
     },
+
+    //GAME END
 
     youWin() {
         clearInterval(this.interval)
@@ -308,5 +328,6 @@ const game = {
         document.getElementById('gameoverSound').play()
         clearInterval(this.interval)
         alert("¡¡GAME OVER!! ¡¡TRY AGAIN!!")
+        this.reset()
     }
 }
