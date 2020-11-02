@@ -304,7 +304,9 @@ const game = {
     },
 
     gameOver() {
+        document.getElementById('sonidoFondo').pause()
+        document.getElementById('gameoverSound').play()
         clearInterval(this.interval)
-        alert ("¡¡GAME OVER!! ¡¡TRY AGAIN!!")
-  }
+        alert("¡¡GAME OVER!! ¡¡TRY AGAIN!!")
+    }
 }
