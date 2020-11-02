@@ -198,9 +198,9 @@ const game = {
                     eachball.ballPos.bally <= eachBrick.brickPos.bricky + eachBrick.brickSize.brickH + 10)
                 {
                     eachball.ballVel.y *= -1
-                    eachBrick.brickStatus = 0
                     this.score += 100
                     this.points()
+                    eachBrick.brickStatus = 0
 
                     console.log(this.score)
                     this.bricks = this.bricks.filter (eachBrick => eachBrick.brickStatus !== 0)// no elimina nada
@@ -213,9 +213,9 @@ const game = {
                     eachball.ballPos.ballx <= eachBrick.brickPos.brickx + eachBrick.brickSize.brickW + 10
                     ) {
                     eachball.ballVel.x *= -1
-                    eachBrick.brickStatus = 0
                     this.score += 100
                     this.points()
+                    eachBrick.brickStatus = 0
 
                     console.log(this.score)
                     this.bricks = this.bricks.filter (eachBrick => eachBrick.brickStatus !== 0)
