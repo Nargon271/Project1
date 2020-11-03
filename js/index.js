@@ -27,6 +27,7 @@ function tryAgain () {
 }
 
 function winAgain() {
+    document.getElementById('winSound').pause()
     const YWdivDisplay = document.querySelector('#windiv')
     YWdivDisplay.style.display = 'none'
     console.log(this.bricks)
