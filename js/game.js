@@ -3,47 +3,55 @@ const game = {
     description: "Arkanoid game",
     version: '1.0.0',
     license: undefined,
-    author: 'Gonzalo Arguelles Navarro y Carlos Martin-Salas',
-    //Canvas
+    author: 'Gonzalo Arguelles Navarro y Carlos Martin-Salas Larena',
+
+    // Canvas
     ctx: undefined,
     canvasTag: undefined,
     canvasSize: {
         w: undefined,
         h: undefined
     },
+
+    // Background
     background: undefined,
-    //juego
+
+    // Juego
     fps: 60,
     frames: 0,
-    //SCORE
+
+    // Score
     score: 0,
     pointsInGame: undefined,
     pointsWin: undefined,
     pointsGameOver: undefined,
-    // bar
+
+    // Bar
     bar: undefined,
     barWidth: 200,
     keys: {
         left: 37,
         right: 39
-    }, 
-    //bricks
+    },
+
+    // Bricks
     bricks: [],
     brickHeight: 40,
     brickWidth: 100,
     brickStatus: 1,
-    brickColor: 'blue',
     brickIniPosX: 35,
     brickIniPosY: 70,
     brickRow: 5,//5
     brickCol: 13,//13
 
-    //balls
+    // Balls
     balls: [],
     
-    //power-ups
+    // Power-ups
     doubleSize: [],
-    extraBalls:[],
+    extraBalls: [],
+    sliceSize: [],
+
 
     // GAME INITIALIZATION
 
@@ -52,15 +60,13 @@ const game = {
         this.ctx = this.canvasTag.getContext('2d')
         this.setDimensions()
         this.start()
-        //hasta aqui el init
+        // Hasta aqui el init
         this.drawBricks()
         this.drawBar()
         this.drawBall()
         this.drawBackground()
         //2. this.drawAll()
         this.setEventListeners()
-        
-         
     },
 
     setDimensions() {
@@ -71,7 +77,7 @@ const game = {
     },
 
     start() {
-        document.getElementById('sonidoFondo').play()
+        document.getElementById('backgroundSound').play()
         this.interval = setInterval(() => {
         this.clearScreen() 
         this.drawAll()    
@@ -79,16 +85,14 @@ const game = {
         this.moveDoubleSize()
         this.createExtraBalls()
         this.moveExtraBalls()
+        this.createSliceSize()
+        this.moveSliceSize()    
         //clear arrays    
         this.clearOutOfScreen()
         //end game
         this.balls.length == 0 ? this.gameOver() : null 
         this.bricks.length == 0 ? this.youWin() : null
-            
         },(1000 / this.fps))
-
-
-    
     },
 
     reset() {
@@ -97,6 +101,7 @@ const game = {
         this.score = 0
         this.balls = []
         this.doubleSize = []
+        this.sliceSize = []
         this.extraBalls = []
         this.bricks = []
         this.points()
@@ -104,12 +109,9 @@ const game = {
         this.drawBall()
         this.bricksColision()
         this.start()
-        
-
     },
 
     drawAll() {
-        
             //framesreset
             this.frames > 2000 ? this.frames = 0 : this.frames++
             ////game elements 
@@ -118,6 +120,7 @@ const game = {
             this.bricks.forEach(elm=> elm.draw())
             this.balls.forEach(elm => elm.draw())
             //power-ups
+            this.sliceSize.forEach(e => e.draw())
             this.doubleSize.forEach(e => e.draw())
             this.extraBalls.forEach(e => e.draw())
             //colisiones
@@ -125,21 +128,21 @@ const game = {
             this.barColision()
             this.DSColision()
             this.EBColision()
+            this.SSColision()
     },
+
 
     //BACKGROUND
 
     drawBackground(){
         this.background = new Background(this.ctx, this.canvasSize.w, this.canvasSize.h, 'images/background.png');
-        
     },
 
     //Bar Elements
 
     drawBar() {
         //this.bar = new PlayerBar(this.ctx, this.canvasSize.w - 290, this.canvasSize.h - 200, 100, 200, '../images/background1.png')
-        this.bar = new PlayerBar(this.ctx, this.canvasSize.w/2 - 100, this.canvasSize.h - 50, this.barWidth, 25, '../images/player-bar.png')
-        
+        this.bar = new PlayerBar(this.ctx, this.canvasSize.w/2 - 100, this.canvasSize.h - 50, this.barWidth, 25, '../images/player-bar.png') 
     },
 
     barColision() {
@@ -150,14 +153,15 @@ const game = {
             {
                 console.log("izquierda",  elm.ballPos.ballx)
                 if (elm.ballVel.x < 0) {
+                    document.getElementById('barColisionSound').play()
                     elm.ballVel.y *= -1
                     elm.ballVel.x *= 1
                 }
                 else {
+                    document.getElementById('barColisionSound').play()
                     elm.ballVel.y *= - 1
                     elm.ballVel.x *= - 1
                 }
-                
             }
             if (elm.ballPos.ballx >= this.bar.barPos.x + this.bar.barSize.w / 2 &&
                 elm.ballPos.ballx <= this.bar.barPos.x + this.bar.barSize.w  &&
@@ -165,10 +169,12 @@ const game = {
             {
                 console.log("derecha",  elm.ballPos.ballx)
                 if (elm.ballVel.x > 0) {
+                    document.getElementById('barColisionSound').play()
                     elm.ballVel.y *= -1
                     elm.ballVel.x *= 1
                 }
                 else {
+                    document.getElementById('barColisionSound').play()
                     elm.ballVel.y *= - 1
                     elm.ballVel.x *= - 1
                 }
@@ -198,32 +204,31 @@ const game = {
                     eachball.ballPos.bally + 10 >= eachBrick.brickPos.bricky &&
                     eachball.ballPos.bally <= eachBrick.brickPos.bricky + eachBrick.brickSize.brickH + 10)
                 {
+                    //document.getElementById('bricksColision').play()
+                    document.getElementById('brickColisionSound').play()
                     eachball.ballVel.y *= -1
                     this.score += 100
                     this.points()
                     eachBrick.brickStatus = 0
-
-                    console.log(this.score)
                     this.bricks = this.bricks.filter (eachBrick => eachBrick.brickStatus !== 0)// no elimina nada
                 }
-
 
                 if (eachball.ballPos.bally >= eachBrick.brickPos.bricky &&
                     eachball.ballPos.bally <= eachBrick.brickPos.bricky + eachBrick.brickSize.brickH && 
                     eachball.ballPos.ballx + 10 >= eachBrick.brickPos.brickx &&
                     eachball.ballPos.ballx <= eachBrick.brickPos.brickx + eachBrick.brickSize.brickW + 10
-                    ) {
+                ) {
+                    //document.getElementById('bricksColision').play()
+                    document.getElementById('brickColisionSound').play()
                     eachball.ballVel.x *= -1
                     this.score += 100
                     this.points()
                     eachBrick.brickStatus = 0
-
-                    console.log(this.score)
                     this.bricks = this.bricks.filter (eachBrick => eachBrick.brickStatus !== 0)
                 }
 
             })
-        } )
+        })
     },
 
     //Ball Elements
@@ -261,6 +266,7 @@ const game = {
             {
             // se añaden dos bolas mas al juego
                 //console.log("nuevas bolas")
+                document.getElementById('EBColisionSound').play()
                 this.balls.push(new Ball (this.ctx, this.bar.barPos.x + this.bar.barSize.w / 2, this.canvasSize.h - 60, 10, 20, 2, 4, this.canvasSize))
                 this.balls.push(new Ball (this.ctx, this.bar.barPos.x + this.bar.barSize.w / 2, this.canvasSize.h - 60, 10, 20, -2, 4, this.canvasSize))
                 // Desparace el powerup al tocar la barra
@@ -305,7 +311,48 @@ const game = {
     },
 
     growSize() {
+        document.getElementById('doublebarSound').play()
         this.bar.barSize.w = this.barWidth * 2
+        setTimeout(() => {
+            this.bar.barSize.w = this.barWidth
+        }, 5000)
+    },
+
+    createSliceSize() {
+        if (this.frames % 400 === 0) {
+          // constructor (ctx, DSPosX, DSPosY, DSWidth, DSHeight, DSImage)
+          let Sy = 0
+          let SminGap = 0
+          let SmaxGap = this.canvasSize.w - 30
+          let SGap = Math.floor(Math.random() * (SmaxGap - SminGap + 1) + SminGap)
+          this.sliceSize.push(new Slicebar(this.ctx, SGap, Sy, 45, 45, '../images/x3.png'))
+        }
+    },
+
+    moveSliceSize() {
+        this.sliceSize.forEach(e => {
+            e.SSPos.y += 4
+        })
+    },
+
+    SSColision() {
+        this.sliceSize.forEach(e => {
+            if (e.SSPos.x < this.bar.barPos.x + this.bar.barSize.w &&
+                e.SSPos.x + e.SSSize.w > this.bar.barPos.x &&
+                e.SSPos.y < this.bar.barPos.y + this.bar.barSize.h &&
+                e.SSSize.h + e.SSPos.y > this.bar.barPos.y)
+            {
+            // aumenta el tamaño de la barra
+            this.sliceSizeBar()
+            // Desparace el powerup al tocar la barra
+            this.sliceSize = this.sliceSize.filter(e => e.SSPos.y >= this.bar.barPos.y)
+            }
+        })
+    },
+
+    sliceSizeBar() {
+        //document.getElementById('doublebarSound').play()               CAMBIAR SONIDO
+        this.bar.barSize.w = this.barWidth / 2
         setTimeout(() => {
             this.bar.barSize.w = this.barWidth
         }, 5000)
@@ -331,15 +378,11 @@ const game = {
 
         this.pointsWin = document.querySelector('.totalScoreW')
         this.pointsWin.innerHTML = this.score
-
-
-        
     },
 
     //Clear SCREEN and ARRAYS
 
     clearScreen() {
-        
         this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
     },
 
@@ -355,13 +398,15 @@ const game = {
     //GAME END
 
     youWin() {
+        document.getElementById('backgroundSound').pause()
+        document.getElementById('winSound').play()
         clearInterval(this.interval)
         const YWdivDisplay = document.querySelector('#windiv') 
         YWdivDisplay.style.display = 'block'
     },
 
     gameOver() {
-        document.getElementById('sonidoFondo').pause()
+        document.getElementById('backgroundSound').pause()
         document.getElementById('gameoverSound').play()
         clearInterval(this.interval)
         const GOdisplay = document.querySelector('#GOdiv')
