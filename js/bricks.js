@@ -1,5 +1,5 @@
 class Brick {
-    constructor(ctx, brickPosX, brickPosY, brickHeight, brickWidth, brickStatus, canvasSize) {
+    constructor(ctx, brickPosX, brickPosY, brickHeight, brickWidth, brickStatus, canvasSize, brickImage) {
         this.ctx = ctx
         this.brickPos = {
             brickx: brickPosX,
@@ -14,13 +14,17 @@ class Brick {
             w: canvasSize.w,
             h: canvasSize.h
         }
+        this.imageName = brickImage
+        this.brickInstance = undefined
+        this.init()
     }
 
-    draw() {        
-        this.ctx.fillStyle = 'blue'
-        this.ctx.strokeStyle = 'green'
-        //(x, y, width, height)
-        this.ctx.strokeRect(this.brickPos.brickx,this.brickPos.bricky,this.brickSize.brickW,this.brickSize.brickH)
-        
+    init() {
+        this.brickInstance = new Image()
+        this.brickInstance.src = `images/${this.imageName}`
+    }
+
+    draw() {
+        this.ctx.drawImage(this.brickInstance, this.brickPos.brickx, this.brickPos.bricky, this.brickSize.brickW, this.brickSize.brickH)
     }
 }
