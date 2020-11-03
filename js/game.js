@@ -130,7 +130,7 @@ const game = {
     //BACKGROUND
 
     drawBackground(){
-        this.background = new Background(this.ctx, this.canvasSize.w, this.canvasSize.h, 'images/background1.png');
+        this.background = new Background(this.ctx, this.canvasSize.w, this.canvasSize.h, 'images/background.png');
         
     },
 
@@ -181,9 +181,10 @@ const game = {
     drawBricks() {
         //(ctx, brickPosX, brickPosY, brickHeight, brickWidth,brickStatus, canvasSize)
         // this.bricks.push(new Brick(this.ctx, 100, 100, this.brickHeight, this.brickWidth,this.brickStatus, this.canvasSize))
+        // this.brick = new Brick(this.ctx, this.canvasSize.w/2 - 100, this.canvasSize.h - 50, this.barWidth, 25, '../images/player-bar.png')
          for (let i = 0; i < this.brickRow; i++){
             for (let j = 0; j < this.brickCol; j++){
-                this.bricks.push(new Brick (this.ctx,this.brickIniPosX + this.brickWidth * j,this.brickIniPosY + this.brickHeight * i, this.brickHeight, this.brickWidth, this.brickStatus, this.canvasSize))
+                this.bricks.push(new Brick (this.ctx,this.brickIniPosX + this.brickWidth * j,this.brickIniPosY + this.brickHeight * i, this.brickHeight, this.brickWidth, this.brickStatus, this.canvasSize, '../images/brick.png'))
             }
         }
         console.log(this.bricks)
@@ -241,7 +242,7 @@ const game = {
           let minGap = 0
           let maxGap = this.canvasSize.w - 30
           let Gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap)
-          this.extraBalls.push(new ExtraBalls (this.ctx, Gap, y, 30, 30, '../images/moreballs.jpg'))
+          this.extraBalls.push(new ExtraBalls (this.ctx, Gap, y, 45, 45, '../images/moreballs.png'))
         }
     },
 
@@ -278,7 +279,7 @@ const game = {
           let minGap = 0
           let maxGap = this.canvasSize.w - 30
           let Gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap)
-          this.doubleSize.push(new DoubleSize (this.ctx, Gap, y, 30, 30, '../images/x2.png'))
+          this.doubleSize.push(new DoubleSize (this.ctx, Gap, y, 45, 45, '../images/x2.png'))
         }
     },
 
