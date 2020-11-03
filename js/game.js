@@ -51,6 +51,7 @@ const game = {
     doubleSize: [],
     extraBalls: [],
     sliceSize: [],
+    changeDir: [],
 
 
     // GAME INITIALIZATION
@@ -86,7 +87,9 @@ const game = {
         this.createExtraBalls()
         this.moveExtraBalls()
         this.createSliceSize()
-        this.moveSliceSize()    
+        this.moveSliceSize()
+        this.createChangeDir()
+        this.moveChangeDir()   
         //clear arrays    
         this.clearOutOfScreen()
         //end game
@@ -102,6 +105,7 @@ const game = {
         this.balls = []
         this.doubleSize = []
         this.sliceSize = []
+        this.changeDir = []
         this.extraBalls = []
         this.bricks = []
         this.points()
@@ -112,23 +116,25 @@ const game = {
     },
 
     drawAll() {
-            //framesreset
-            this.frames > 2000 ? this.frames = 0 : this.frames++
-            ////game elements 
-            this.background.draw()
-            this.bar.draw()
-            this.bricks.forEach(elm=> elm.draw())
-            this.balls.forEach(elm => elm.draw())
-            //power-ups
-            this.sliceSize.forEach(e => e.draw())
-            this.doubleSize.forEach(e => e.draw())
-            this.extraBalls.forEach(e => e.draw())
-            //colisiones
-            this.bricksColision()
-            this.barColision()
-            this.DSColision()
-            this.EBColision()
-            this.SSColision()
+        //framesreset
+        this.frames > 2000 ? this.frames = 0 : this.frames++
+        ////game elements 
+        this.background.draw()
+        this.bar.draw()
+        this.bricks.forEach(elm=> elm.draw())
+        this.balls.forEach(elm => elm.draw())
+        //power-ups
+        this.sliceSize.forEach(e => e.draw())
+        this.doubleSize.forEach(e => e.draw())
+        this.extraBalls.forEach(e => e.draw())
+        this.changeDir.forEach(e => e.draw())
+        //colisiones
+        this.bricksColision()
+        this.barColision()
+        this.DSColision()
+        this.EBColision()
+        this.SSColision()
+        this.CDColision()
     },
 
 
@@ -325,7 +331,7 @@ const game = {
           let SminGap = 0
           let SmaxGap = this.canvasSize.w - 30
           let SGap = Math.floor(Math.random() * (SmaxGap - SminGap + 1) + SminGap)
-          this.sliceSize.push(new Slicebar(this.ctx, SGap, Sy, 45, 45, '../images/x3.png'))
+          this.sliceSize.push(new Slicebar(this.ctx, SGap, Sy, 35, 94, '../images/sliceSize.png'))
         }
     },
 
@@ -351,10 +357,51 @@ const game = {
     },
 
     sliceSizeBar() {
-        //document.getElementById('doublebarSound').play()               CAMBIAR SONIDO
+        document.getElementById('sliceSound').play()
         this.bar.barSize.w = this.barWidth / 2
         setTimeout(() => {
             this.bar.barSize.w = this.barWidth
+        }, 5000)
+    },
+
+    createChangeDir() {
+        if (this.frames % 400 === 0) {
+          // constructor (ctx, CDPosX, CDPosY, CDWidth, CDHeight, CDImage)
+          let Sy = 0
+          let SminGap = 0
+          let SmaxGap = this.canvasSize.w - 30
+          let SGap = Math.floor(Math.random() * (SmaxGap - SminGap + 1) + SminGap)
+          this.changeDir.push(new Change(this.ctx, SGap, Sy, 45, 45, '../images/changeDir.png'))
+        }
+    },
+
+    moveChangeDir() {
+        this.changeDir.forEach(e => {
+            e.CDPos.y += 4
+        })
+    },
+
+    CDColision() {
+        this.changeDir.forEach(e => {
+            if (e.CDPos.x < this.bar.barPos.x + this.bar.barSize.w &&
+                e.CDPos.x + e.CDSize.w > this.bar.barPos.x &&
+                e.CDPos.y < this.bar.barPos.y + this.bar.barSize.h &&
+                e.CDSize.h + e.CDPos.y > this.bar.barPos.y)
+            {
+            this.changeCommands()
+            // Desparace el powerup al tocar la barra
+            this.changeDir = this.changeDir.filter(e => e.CDPos.y >= this.bar.barPos.y)
+            }
+        })
+    },
+
+    changeCommands() {
+        document.getElementById('CDColisionSound').play()
+        this.keys.left = 39
+        this.keys.right = 37
+        setTimeout(() => {
+            this.keys.left = 37
+            this.keys.right = 39
         }, 5000)
     },
 
@@ -389,6 +436,10 @@ const game = {
     clearOutOfScreen() {
         this.doubleSize = this.doubleSize.filter(e => e.DSPos.y <= this.canvasSize.h)
         //console.log(this.doubleSize)
+        this.sliceSize = this.sliceSize.filter(e => e.SSPos.y <= this.canvasSize.h)
+        //console.log(this.sliceSize)
+        this.changeDir = this.changeDir.filter(e => e.CDPos.y <= this.canvasSize.h)
+        //console.log(this.sliceSize)
         this.extraBalls = this.extraBalls.filter(e => e.EBPos.y <= this.canvasSize.h)
         //console.log(this.extraBalls)
         this.balls = this.balls.filter(e => e.ballPos.bally <= this.canvasSize.h)
