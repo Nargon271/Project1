@@ -32,7 +32,7 @@ const game = {
     keys: {
         left: 'ArrowLeft',
         right: 'ArrowRight',
-        space: ' '
+        space: undefined //' '
     },
 
     // Bricks
@@ -53,6 +53,9 @@ const game = {
     extraBalls: [],
     sliceSize: [],
     changeDir: [],
+    shotBow: [],
+    arrow: [],
+    arrowStatus: 1,
 
 
     // GAME INITIALIZATION
@@ -88,7 +91,9 @@ const game = {
         this.createSliceSize()
         this.moveSliceSize()
         this.createChangeDir()
-        this.moveChangeDir()       
+        this.moveChangeDir()
+        this.createShotBow()
+        this.moveShotBow()   
         this.clearOutOfScreen()
         //end game
         this.balls.length == 0 ? this.gameOver() : null 
@@ -100,16 +105,22 @@ const game = {
         this.drawBackground()
         this.drawBar()
         this.score = 0
+        this.keys.left = 'ArrowLeft'
+        this.keys.right = 'ArrowRight'
+        this.keys.space = undefined
         this.balls = []
         this.doubleSize = []
         this.sliceSize = []
         this.changeDir = []
         this.extraBalls = []
+        this.shotBow = []
+        this.arrow = [],
         this.bricks = []
         this.points()
         this.drawBricks()
         this.drawBall()
         this.bricksColision()
+        this.arrowColision()
         this.start()
     },
 
@@ -126,13 +137,19 @@ const game = {
         this.doubleSize.forEach(e => e.draw())
         this.extraBalls.forEach(e => e.draw())
         this.changeDir.forEach(e => e.draw())
+        this.shotBow.forEach(e => e.draw())
+        this.arrow.forEach(e => e.draw())
         //colisions
         this.bricksColision()
+        this.arrowColision()
         this.barColision()
         this.DSColision()
         this.EBColision()
         this.SSColision()
         this.CDColision()
+        this.shotBowColision()
+        this.moveArrow()
+        
     },
 
 
@@ -154,7 +171,6 @@ const game = {
                 elm.ballPos.ballx <= (this.bar.barPos.x + this.bar.barSize.w / 2) -1 &&
                 elm.ballPos.bally + 10 >= this.bar.barPos.y)
             {
-                console.log("izquierda",  elm.ballPos.ballx)
                 if (elm.ballVel.x < 0) {
                     document.getElementById('barColisionSound').play()
                     elm.ballVel.y *= -1
@@ -386,9 +402,83 @@ const game = {
         }, 5000)
     },
 
+    //BOW Power Up
+
+    createShotBow() { 
+        if (this.frames % 1800 === 0) { //cambiar de nuevo a 100 para comprobar despues
+          let Sy = 0
+          let SminGap = 0
+          let SmaxGap = this.canvasSize.w - 30
+          let SGap = Math.floor(Math.random() * (SmaxGap - SminGap + 1) + SminGap)
+          this.shotBow.push(new Shot (this.ctx, SGap, Sy, 70, 10, '../images/bow.png'))
+        }
+    },
+
+    moveShotBow() {
+        this.shotBow.forEach(e => {
+            e.ShotPos.y += 4
+        })
+    },
+    
+    shotBowColision() {
+        //SONIDO BOW
+        this.shotBow.forEach(e => {
+            if (e.ShotPos.x < this.bar.barPos.x + this.bar.barSize.w &&
+                e.ShotPos.x + e.ShotSize.w > this.bar.barPos.x &&
+                e.ShotPos.y < this.bar.barPos.y + this.bar.barSize.h &&
+                e.ShotSize.h + e.ShotPos.y > this.bar.barPos.y)
+            {
+            this.createArrow()
+            this.shotBow = this.shotBow.filter(e => e.ShotPos.y >= this.bar.barPos.y)
+            }
+        })
+    },
+
+    //PROYECTILES  
+    
+    createArrow() {
+        //SONIDO ARROW
+        this.keys.space = ' '
+        this.arrow.push(new Arrow(this.ctx, this.bar.barPos.x + this.bar.barSize.w / 2, this.canvasSize.h - 60, 8, 65, this.arrowStatus, '../images/arrow.png'))
+        console.log(this.arrow)
+        setTimeout(() => {
+            this.keys.space = undefined
+        }, 5000)
+    },
+
+    moveArrow() {
+         this.arrow.forEach(e => {
+            e.arrowPos.y -= 4
+        })
+    },
+
+    arrowColision() {
+        this.arrow.forEach(eachArrow => {
+            this.bricks.forEach(eachBrick => { 
+                if (eachArrow.arrowPos.x < eachBrick.brickPos.brickx + eachBrick.brickSize.brickW &&
+                    eachArrow.arrowPos.x + 8 > eachBrick.brickPos.brickx &&
+                    eachArrow.arrowPos.y < eachBrick.brickPos.bricky + eachBrick.brickSize.brickH &&
+                    65 + eachArrow.arrowPos.y > eachBrick.brickPos.bricky)
+                {
+                    document.getElementById('brickColisionSound').play()
+                    this.score += 100
+                    this.points()
+                    eachBrick.brickStatus = 0
+                    eachArrow.arrowStatus = 0
+                    this.bricks = this.bricks.filter(eachBrick => eachBrick.brickStatus !== 0)
+                    this.arrow = this.arrow.filter (eachArrow => eachArrow.arrowStatus !== 0)
+                }
+            })
+        })  
+    },
+
+
     //KEYBOARD COMMANDS
 
     setEventListeners() {
+        document.onkeyup = e => {
+            e.key === this.keys.space ? this.createArrow() : null
+        }
         document.onkeydown = e => {
             e.key === this.keys.left ? this.bar.move('left') : null
             e.key === this.keys.right ? this.bar.move('right') : null
@@ -420,6 +510,8 @@ const game = {
         this.changeDir = this.changeDir.filter(e => e.CDPos.y <= this.canvasSize.h)
         this.extraBalls = this.extraBalls.filter(e => e.EBPos.y <= this.canvasSize.h)
         this.balls = this.balls.filter(e => e.ballPos.bally <= this.canvasSize.h)
+        this.shotBow = this.shotBow.filter(e => e.ShotPos.y <= this.canvasSize.h)
+        this.arrow = this.arrow.filter(e => e.arrowPos.y > 0) 
     },
 
     //GAME END

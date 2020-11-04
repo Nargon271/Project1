@@ -22,7 +22,6 @@ function startGame () {
 function tryAgain () {
     const GOdivDisplay = document.querySelector('#GOdiv')
     GOdivDisplay.style.display = 'none'
-    console.log(this.bricks)
     game.reset('canvas')
 }
 
@@ -30,6 +29,5 @@ function winAgain() {
     document.getElementById('winSound').pause()
     const YWdivDisplay = document.querySelector('#windiv')
     YWdivDisplay.style.display = 'none'
-    console.log(this.bricks)
     game.reset('canvas')
 }
