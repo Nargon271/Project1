@@ -22,7 +22,6 @@ class Ball {
     draw() {
         this.ctx.beginPath()
         this.ctx.fillStyle = 'red'
-        // this.ctx.arc(posx,posy,radius,0°inicio,Math.PI * 2)
         this.ctx.arc(this.ballPos.ballx, this.ballPos.bally, 10, 0, Math.PI * 2)
         this.ctx.fill()
         this.ctx.stroke()
@@ -31,7 +30,6 @@ class Ball {
     }
 
     move() {
-        //colision con el entorno: OK
         if (this.ballPos.bally <= 10) {
             this.ballVel.y *= -1
         } else null

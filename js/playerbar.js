@@ -24,7 +24,6 @@ class PlayerBar {
     }
 
     move(dir) {
-    
         if (dir === 'left' && this.barPos.x >= 0) {
             this.barPos.x -=20
         } else null

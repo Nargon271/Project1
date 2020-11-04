@@ -16,7 +16,7 @@ const game = {
     // Background
     background: undefined,
 
-    // Juego
+    // Game
     fps: 60,
     frames: 0,
 
@@ -30,8 +30,9 @@ const game = {
     bar: undefined,
     barWidth: 200,
     keys: {
-        left: 37,
-        right: 39
+        left: 'ArrowLeft',
+        right: 'ArrowRight',
+        space: ' '
     },
 
     // Bricks
@@ -40,7 +41,7 @@ const game = {
     brickWidth: 100,
     brickStatus: 1,
     brickIniPosX: 35,
-    brickIniPosY: 70,
+    brickIniPosY: 60,
     brickRow: 5,//5
     brickCol: 13,//13
 
@@ -61,12 +62,10 @@ const game = {
         this.ctx = this.canvasTag.getContext('2d')
         this.setDimensions()
         this.start()
-        // Hasta aqui el init
         this.drawBricks()
         this.drawBar()
         this.drawBall()
         this.drawBackground()
-        //2. this.drawAll()
         this.setEventListeners()
     },
 
@@ -89,8 +88,7 @@ const game = {
         this.createSliceSize()
         this.moveSliceSize()
         this.createChangeDir()
-        this.moveChangeDir()   
-        //clear arrays    
+        this.moveChangeDir()       
         this.clearOutOfScreen()
         //end game
         this.balls.length == 0 ? this.gameOver() : null 
@@ -128,7 +126,7 @@ const game = {
         this.doubleSize.forEach(e => e.draw())
         this.extraBalls.forEach(e => e.draw())
         this.changeDir.forEach(e => e.draw())
-        //colisiones
+        //colisions
         this.bricksColision()
         this.barColision()
         this.DSColision()
@@ -147,7 +145,6 @@ const game = {
     //Bar Elements
 
     drawBar() {
-        //this.bar = new PlayerBar(this.ctx, this.canvasSize.w - 290, this.canvasSize.h - 200, 100, 200, '../images/background1.png')
         this.bar = new PlayerBar(this.ctx, this.canvasSize.w/2 - 100, this.canvasSize.h - 50, this.barWidth, 25, '../images/player-bar.png') 
     },
 
@@ -173,7 +170,7 @@ const game = {
                 elm.ballPos.ballx <= this.bar.barPos.x + this.bar.barSize.w  &&
                 elm.ballPos.bally + 10 >= this.bar.barPos.y)
             {
-                console.log("derecha",  elm.ballPos.ballx)
+
                 if (elm.ballVel.x > 0) {
                     document.getElementById('barColisionSound').play()
                     elm.ballVel.y *= -1
@@ -191,15 +188,11 @@ const game = {
     //Brick Elements
 
     drawBricks() {
-        //(ctx, brickPosX, brickPosY, brickHeight, brickWidth,brickStatus, canvasSize)
-        // this.bricks.push(new Brick(this.ctx, 100, 100, this.brickHeight, this.brickWidth,this.brickStatus, this.canvasSize))
-        // this.brick = new Brick(this.ctx, this.canvasSize.w/2 - 100, this.canvasSize.h - 50, this.barWidth, 25, '../images/player-bar.png')
          for (let i = 0; i < this.brickRow; i++){
             for (let j = 0; j < this.brickCol; j++){
                 this.bricks.push(new Brick (this.ctx,this.brickIniPosX + this.brickWidth * j,this.brickIniPosY + this.brickHeight * i, this.brickHeight, this.brickWidth, this.brickStatus, this.canvasSize, '../images/brick.png'))
             }
         }
-        console.log(this.bricks)
     },
 
     bricksColision() {
@@ -210,7 +203,6 @@ const game = {
                     eachball.ballPos.bally + 10 >= eachBrick.brickPos.bricky &&
                     eachball.ballPos.bally <= eachBrick.brickPos.bricky + eachBrick.brickSize.brickH + 10)
                 {
-                    //document.getElementById('bricksColision').play()
                     document.getElementById('brickColisionSound').play()
                     eachball.ballVel.y *= -1
                     this.score += 100
@@ -224,7 +216,6 @@ const game = {
                     eachball.ballPos.ballx + 10 >= eachBrick.brickPos.brickx &&
                     eachball.ballPos.ballx <= eachBrick.brickPos.brickx + eachBrick.brickSize.brickW + 10
                 ) {
-                    //document.getElementById('bricksColision').play()
                     document.getElementById('brickColisionSound').play()
                     eachball.ballVel.x *= -1
                     this.score += 100
@@ -240,15 +231,13 @@ const game = {
     //Ball Elements
 
     drawBall() {
-        //(ctx, ballPosX, ballPosY, ballRadius, ballDiameter, ballVelX, ballVely,canvasSize)
         this.balls.push(new Ball (this.ctx, this.canvasSize.w/2, this.canvasSize.h - 60, 10, 20, 4, 4, this.canvasSize))
     },
     
-    //EXTRA BALLS power up
+    //EXTRA BALLS Power Up
 
     createExtraBalls() {
-        if (this.frames % 200 === 0) {
-          // constructor (ctx, DSPosX, DSPosY, DSWidth, DSHeight, DSImage)
+        if (this.frames % 300 === 0) {
           let y = 0
           let minGap = 0
           let maxGap = this.canvasSize.w - 30
@@ -270,23 +259,18 @@ const game = {
                 e.EBPos.y < this.bar.barPos.y + this.bar.barSize.h &&
                 e.EBSize.h + e.EBPos.y > this.bar.barPos.y)
             {
-            // se añaden dos bolas mas al juego
-                //console.log("nuevas bolas")
                 document.getElementById('EBColisionSound').play()
-                this.balls.push(new Ball (this.ctx, this.bar.barPos.x + this.bar.barSize.w / 2, this.canvasSize.h - 60, 10, 20, 2, 4, this.canvasSize))
-                this.balls.push(new Ball (this.ctx, this.bar.barPos.x + this.bar.barSize.w / 2, this.canvasSize.h - 60, 10, 20, -2, 4, this.canvasSize))
-                // Desparace el powerup al tocar la barra
+                this.balls.push(new Ball (this.ctx, this.bar.barPos.x + this.bar.barSize.w / 2, this.canvasSize.h - 60, 10, 20, 4, 4, this.canvasSize))
+                this.balls.push(new Ball (this.ctx, this.bar.barPos.x + this.bar.barSize.w / 2, this.canvasSize.h - 60, 10, 20, -4, 4, this.canvasSize))
                 this.extraBalls = this.extraBalls.filter(e => e.EBPos.y >= this.bar.barPos.y)
-                //console.log(this.extraBalls)    
             }
         })
     },
     
-    //DOUBLE SIZE power up
+    //DOUBLE SIZE Power Up
 
     createDoubleSize() {
-        if (this.frames % 500 === 0) {
-          // constructor (ctx, DSPosX, DSPosY, DSWidth, DSHeight, DSImage)
+        if (this.frames % 1000 === 0) {
           let y = 0
           let minGap = 0
           let maxGap = this.canvasSize.w - 30
@@ -308,9 +292,7 @@ const game = {
                 e.DSPos.y < this.bar.barPos.y + this.bar.barSize.h &&
                 e.DSSize.h + e.DSPos.y > this.bar.barPos.y)
             {
-            // aumenta el tamaño de la barra
             this.growSize()
-            // Desparace el powerup al tocar la barra
             this.doubleSize = this.doubleSize.filter(e => e.DSPos.y >= this.bar.barPos.y)
             }
         })
@@ -324,9 +306,10 @@ const game = {
         }, 5000)
     },
 
+    //SLICE SIZE Power Up
+
     createSliceSize() {
-        if (this.frames % 400 === 0) {
-          // constructor (ctx, DSPosX, DSPosY, DSWidth, DSHeight, DSImage)
+        if (this.frames % 480 === 0) {
           let Sy = 0
           let SminGap = 0
           let SmaxGap = this.canvasSize.w - 30
@@ -348,9 +331,7 @@ const game = {
                 e.SSPos.y < this.bar.barPos.y + this.bar.barSize.h &&
                 e.SSSize.h + e.SSPos.y > this.bar.barPos.y)
             {
-            // aumenta el tamaño de la barra
             this.sliceSizeBar()
-            // Desparace el powerup al tocar la barra
             this.sliceSize = this.sliceSize.filter(e => e.SSPos.y >= this.bar.barPos.y)
             }
         })
@@ -364,9 +345,10 @@ const game = {
         }, 5000)
     },
 
+    //CHANGE DIRECTION Power Up
+
     createChangeDir() {
-        if (this.frames % 400 === 0) {
-          // constructor (ctx, CDPosX, CDPosY, CDWidth, CDHeight, CDImage)
+        if (this.frames % 600 === 0) {
           let Sy = 0
           let SminGap = 0
           let SmaxGap = this.canvasSize.w - 30
@@ -389,7 +371,6 @@ const game = {
                 e.CDSize.h + e.CDPos.y > this.bar.barPos.y)
             {
             this.changeCommands()
-            // Desparace el powerup al tocar la barra
             this.changeDir = this.changeDir.filter(e => e.CDPos.y >= this.bar.barPos.y)
             }
         })
@@ -397,11 +378,11 @@ const game = {
 
     changeCommands() {
         document.getElementById('CDColisionSound').play()
-        this.keys.left = 39
-        this.keys.right = 37
+        this.keys.left = 'ArrowRight'
+        this.keys.right = 'ArrowLeft'
         setTimeout(() => {
-            this.keys.left = 37
-            this.keys.right = 39
+            this.keys.left = 'ArrowLeft'
+            this.keys.right = 'ArrowRight'
         }, 5000)
     },
 
@@ -409,8 +390,8 @@ const game = {
 
     setEventListeners() {
         document.onkeydown = e => {
-            e.keyCode === this.keys.left ? this.bar.move('left') : null
-            e.keyCode === this.keys.right ? this.bar.move('right') : null
+            e.key === this.keys.left ? this.bar.move('left') : null
+            e.key === this.keys.right ? this.bar.move('right') : null
         }
     },
     
@@ -435,15 +416,10 @@ const game = {
 
     clearOutOfScreen() {
         this.doubleSize = this.doubleSize.filter(e => e.DSPos.y <= this.canvasSize.h)
-        //console.log(this.doubleSize)
         this.sliceSize = this.sliceSize.filter(e => e.SSPos.y <= this.canvasSize.h)
-        //console.log(this.sliceSize)
         this.changeDir = this.changeDir.filter(e => e.CDPos.y <= this.canvasSize.h)
-        //console.log(this.sliceSize)
         this.extraBalls = this.extraBalls.filter(e => e.EBPos.y <= this.canvasSize.h)
-        //console.log(this.extraBalls)
         this.balls = this.balls.filter(e => e.ballPos.bally <= this.canvasSize.h)
-        //console.log(this.balls)
     },
 
     //GAME END
