@@ -405,7 +405,7 @@ const game = {
     //BOW Power Up
 
     createShotBow() { 
-        if (this.frames % 1800 === 0) { //cambiar de nuevo a 100 para comprobar despues
+        if (this.frames % 100 === 0) { //cambiar de nuevo a 100 para comprobar despues
           let Sy = 0
           let SminGap = 0
           let SmaxGap = this.canvasSize.w - 30
@@ -421,13 +421,13 @@ const game = {
     },
     
     shotBowColision() {
-        //SONIDO BOW
         this.shotBow.forEach(e => {
             if (e.ShotPos.x < this.bar.barPos.x + this.bar.barSize.w &&
                 e.ShotPos.x + e.ShotSize.w > this.bar.barPos.x &&
                 e.ShotPos.y < this.bar.barPos.y + this.bar.barSize.h &&
                 e.ShotSize.h + e.ShotPos.y > this.bar.barPos.y)
             {
+            document.getElementById('bowColisionSound').play()
             this.createArrow()
             this.shotBow = this.shotBow.filter(e => e.ShotPos.y >= this.bar.barPos.y)
             }
@@ -437,8 +437,8 @@ const game = {
     //PROYECTILES  
     
     createArrow() {
-        //SONIDO ARROW
         this.keys.space = ' '
+        document.getElementById('arrowSound').play()
         this.arrow.push(new Arrow(this.ctx, this.bar.barPos.x + this.bar.barSize.w / 2, this.canvasSize.h - 60, 8, 65, this.arrowStatus, '../images/arrow.png'))
         console.log(this.arrow)
         setTimeout(() => {
