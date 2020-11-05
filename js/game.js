@@ -32,7 +32,7 @@ const game = {
     keys: {
         left: 'ArrowLeft',
         right: 'ArrowRight',
-        space: undefined //' '
+        space: undefined
     },
 
     // Bricks
@@ -42,8 +42,8 @@ const game = {
     brickStatus: 1,
     brickIniPosX: 35,
     brickIniPosY: 60,
-    brickRow: 5,//5
-    brickCol: 13,//13
+    brickRow: 5,
+    brickCol: 13,
 
     // Balls
     balls: [],
@@ -253,7 +253,7 @@ const game = {
     //EXTRA BALLS Power Up
 
     createExtraBalls() {
-        if (this.frames % 300 === 0) {
+        if (this.frames % 600 === 0) {
           let y = 0
           let minGap = 0
           let maxGap = this.canvasSize.w - 30
@@ -325,7 +325,7 @@ const game = {
     //SLICE SIZE Power Up
 
     createSliceSize() {
-        if (this.frames % 480 === 0) {
+        if (this.frames % 420 === 0) {
           let Sy = 0
           let SminGap = 0
           let SmaxGap = this.canvasSize.w - 30
@@ -364,7 +364,7 @@ const game = {
     //CHANGE DIRECTION Power Up
 
     createChangeDir() {
-        if (this.frames % 600 === 0) {
+        if (this.frames % 480 === 0) {
           let Sy = 0
           let SminGap = 0
           let SmaxGap = this.canvasSize.w - 30
@@ -405,7 +405,7 @@ const game = {
     //BOW Power Up
 
     createShotBow() { 
-        if (this.frames % 100 === 0) { //cambiar de nuevo a 100 para comprobar despues
+        if (this.frames % 1500 === 0) { 
           let Sy = 0
           let SminGap = 0
           let SmaxGap = this.canvasSize.w - 30
@@ -440,7 +440,6 @@ const game = {
         this.keys.space = ' '
         document.getElementById('arrowSound').play()
         this.arrow.push(new Arrow(this.ctx, this.bar.barPos.x + this.bar.barSize.w / 2, this.canvasSize.h - 60, 8, 65, this.arrowStatus, '../images/arrow.png'))
-        console.log(this.arrow)
         setTimeout(() => {
             this.keys.space = undefined
         }, 5000)
